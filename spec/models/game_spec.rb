@@ -128,4 +128,33 @@ RSpec.describe Game, type: :model do
        expect(game_w_questions.previous_level).to eq(level - 1)
     end
   end
+
+  #homework-61-7
+  context '.answer_current_question!' do
+    it 'checks right answer' do
+      q = game_w_questions.current_game_question
+      expect(game_w_questions.answer_current_question!('d')).to be_truthy
+      expect(game_w_questions.status).to eq(:in_progress)
+    end
+
+    it 'checks wrong answer' do
+      q = game_w_questions.current_game_question
+      expect(game_w_questions.answer_current_question!('a')).to be_falsey
+      expect(game_w_questions.status).to eq(:fail)
+    end
+
+    it 'check last answer and won million' do
+      game_w_questions.current_level = Question::QUESTION_LEVELS.max
+      expect(game_w_questions.answer_current_question!('d')).to be_truthy
+      expect(game_w_questions.status).to eq(:won)
+      expect(game_w_questions.prize).to be  >= 1000000
+    end
+
+    it 'check answer time' do
+      game_w_questions.finished_at = Time.now
+      game_w_questions.created_at = Game::TIME_LIMIT.ago
+      expect(game_w_questions.answer_current_question!('d')).to be_falsey
+      expect(game_w_questions.status).to eq(:timeout)
+    end
+  end
 end
