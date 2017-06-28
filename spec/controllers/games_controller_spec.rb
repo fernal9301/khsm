@@ -19,11 +19,11 @@ RSpec.describe GamesController, type: :controller do
 
     it 'kick from #create' do
       post :create
-      
+
       expect(response.status).not_to eq(200)
       expect(response).to redirect_to(new_user_session_path)
       expect(flash[:alert]).to be
-    end    
+    end
 
     it 'kick from #answer' do
       put :answer, id:  game_w_questions.id
@@ -39,7 +39,7 @@ RSpec.describe GamesController, type: :controller do
       expect(response.status).not_to eq(200)
       expect(response).to redirect_to(new_user_session_path)
       expect(flash[:alert]).to be
-    end 
+    end
   end
   # группа тестов на экшены контроллера, доступных залогиненным юзерам
   context 'Usual user' do
@@ -73,15 +73,15 @@ RSpec.describe GamesController, type: :controller do
     end
 
     # homework-62-1
-    it 'not #show alien game' do 
+    it 'not #show alien game' do
       alien_game = FactoryGirl.create(:game_with_questions)
-      
-      get :show, id: alien_game.id 
+
+      get :show, id: alien_game.id
       expect(response.status).not_to eq(200)
       expect(response).to redirect_to(root_path)
       expect(flash[:alert]).to be
-    end 
- 
+    end
+
     # юзер отвечает на игру корректно - игра продолжается
     it 'answers correct' do
       # передаем параметр params[:letter]
@@ -100,7 +100,7 @@ RSpec.describe GamesController, type: :controller do
           id: game_w_questions.id,
       # передаем заведомо неправильный ответ
           letter: 'a'
-      
+
       game = assigns(:game)
 
       expect(game.finished?).to be_truthy
@@ -112,9 +112,9 @@ RSpec.describe GamesController, type: :controller do
     # homework-62-2
     it 'takes money' do
       game_w_questions.update_attribute(:current_level, 2)
-      
+
       put :take_money, id: game_w_questions.id
-    
+
       game = assigns(:game)
       expect(game.finished?).to be_truthy
       expect(game.prize).to eq(200)
@@ -139,6 +139,24 @@ RSpec.describe GamesController, type: :controller do
       # и редирект на страницу старой игры
       expect(response).to redirect_to(game_path(game_w_questions))
       expect(flash[:alert]).to be
+    end
+
+    # тест на отработку "помощи зала"
+    it 'uses audience help' do
+      # сперва проверяем что в подсказках текущего вопроса пусто
+      expect(game_w_questions.current_game_question.help_hash[:audience_help]).not_to be
+      expect(game_w_questions.audience_help_used).to be_falsey
+
+      # фигачим запрос в контроллере с нужным типом
+      put :help, id: game_w_questions.id, help_type: :audience_help
+      game = assigns(:game)
+
+      # проверяем, что игра не закончилась, что флажок установился, и подсказка записалась
+      expect(game.finished?).to be_falsey
+      expect(game.audience_help_used).to be_truthy
+      expect(game.current_game_question.help_hash[:audience_help]).to be
+      expect(game.current_game_question.help_hash[:audience_help].keys).to contain_exactly('a', 'b', 'c', 'd')
+      expect(response).to redirect_to(game_path(game))
     end
   end
 end
