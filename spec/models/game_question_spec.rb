@@ -38,6 +38,21 @@ RSpec.describe GameQuestion, type: :model do
     it 'correct .correct_answer_key' do
       expect(game_question.correct_answer_key).to eq 'b'
     end
+
+    # homework-63-1
+    it 'correct .help_hash' do
+      expect(game_question.help_hash).to be_a(Hash)
+
+      game_question.help_hash[:some_key1] = 'value1'
+      game_question.help_hash['some_key2'] = 'value2'
+
+      game_question.save
+      expect(game_question.persisted?).to eq true
+
+      gq = GameQuestion.last
+
+      expect(gq.help_hash).to eq({:some_key1=>"value1", "some_key2"=>"value2"})
+    end
   end
 
   # help_hash у нас имеет такой формат:
