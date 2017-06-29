@@ -175,11 +175,9 @@ RSpec.describe GamesController, type: :controller do
       put :help, id: game_w_questions.id, help_type: :fifty_fifty
       game = assigns(:game)
 
-      expect(game.finished?).to be_falsey
       expect(game.fifty_fifty_used).to be_truthy
-      expect(game.current_game_question.help_hash[:fifty_fifty]).to be
-      expect(game.current_game_question.help_hash[:fifty_fifty].size).to eq 2
       expect(response).to redirect_to(game_path(game))
+      expect(flash[:info]).to be.and eq("Вы использовали подсказку")
     end
   end
 end
