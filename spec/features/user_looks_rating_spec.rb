@@ -7,7 +7,7 @@ RSpec.feature 'USER looks game rating', type: :feature do
   scenario 'successfully' do
     visit '/'
 
-    expect(page).to have_content "Настя"
+    expect(page).to have_content 'Настя'
     expect(page).to have_content '100'
     #save_and_open_page
   end
