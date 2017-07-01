@@ -37,7 +37,7 @@ RSpec.feature 'USER creates a game', type: :feature do
     expect(page).to have_current_path '/games/1'
 
     # Ожидаем, что на экране вопрос игры (самый простой)
-    expect(page).to have_content 'Когда была куликовская битва номер 0?'
+    expect(page).to have_content "Когда была куликовская битва номер 0?"
 
     # Ожидаем, что на экране варианты ответа на вопрос
     expect(page).to have_content '1380'
