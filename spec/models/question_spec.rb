@@ -19,6 +19,6 @@ RSpec.describe Question, type: :model do
     it { should allow_value(14).for(:level) }
 
     subject { FactoryGirl.build(:question) }
-    it { should validate_uniqueness_of(:text).on(:create) }
+    it { should validate_uniqueness_of(:text).ignoring_case_sensitivity }
   end
 end
