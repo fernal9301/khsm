@@ -34,7 +34,7 @@ RSpec.feature 'USER answers wrong', type: :feature do
     expect(page).to have_current_path '/users/1'
 
     expect(page).to have_content 'проигрыш'
-    expect(flash[:alert]).to have_content 'Игра закончена, ваш приз 0 ₽'
+    expect(page).to have_content 'Игра закончена, ваш приз 0 ₽'
     #save_and_open_page
   end
 end
